@@ -16,4 +16,6 @@ Create a package lists so that installation becomes easier.
 One simple rule, keep the project clean from conlicts.Suggested process, push code to your branch, make a pull request, let it be reviewed and then merged. 
 
 
-Live Demo : https://covid-policy-tier.herokuapp.com/  
+Backend : https://covid-19-tier-backend.herokuapp.com/  
+
+Live Demo :https://covid-policy-tier.herokuapp.com/
