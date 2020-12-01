@@ -1,3 +1,4 @@
+import { Container } from '@material-ui/core';
 import React from 'react';
 const { tableau } = window;
 
@@ -16,9 +17,9 @@ const PolicyDashboard = () => {
         loadDashBoard();
     }, []);
     return (
-        <div>
+        <Container maxWidth="md">
             <div ref={ref}>
             </div>
-        </div>);
+        </Container>);
 }
 export default PolicyDashboard;

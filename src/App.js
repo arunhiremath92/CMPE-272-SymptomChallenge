@@ -5,6 +5,7 @@ import PolicyDashboard from './PolicyDashboard';
 import TierDashboard from './TierDashboard';
 import { AppBar, Button, Container, makeStyles, Toolbar } from '@material-ui/core';
 import { Switch, Route, Redirect } from "react-router-dom";
+import HomeDashBoard from './HomeDashBoard';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -14,6 +15,8 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
 }));
+
+
 
 let App = () => {
 
@@ -31,21 +34,25 @@ let App = () => {
       },
       "NY": {
         fill: "#CC0000"
-      }
+      },
+      "CA": {
+        fill: '#9400D3',
+        clickHandler: (event) => console.log('Custom handler for NJ', event.target.dataset)
+      },
     };
   };
   const classes = useStyles();
   let [showTierPrediction, setShowTierPrediction] = React.useState(false);
   let [showPolicyPrediction, setShowPolicyPrediction] = React.useState(false);
-  if (showTierPrediction) {
-    window.location.href = "/forecasts"
-  }
-  if (showTierPrediction) {
-    window.location.href = "/forecasts"
-  }
+  
   if (showPolicyPrediction) {
-    window.location.href = "/"
+    window.location.href = "/policy"
   }
+  if (showTierPrediction) {
+    window.location.href = "/forecasts"
+  }
+
+
   const handleForecastBtnEvent = (event) => {
     setShowPolicyPrediction(false)
     setShowTierPrediction(true)
@@ -55,29 +62,30 @@ let App = () => {
     setShowTierPrediction(false)
     setShowPolicyPrediction(true)
   }
-
   return (
-    <div className="App">
+    <div >
       <AppBar position="static">
         <Toolbar>
           <Button color="inherit" onClick={handleForecastBtnEvent}> Tier Predictions</Button>
           <Button color="inherit" onClick={handlePolicyPredctionsBtnEvent}> Policy Predictions</Button>
-
         </Toolbar>
       </AppBar>
-      <div className={classes.paper}>
-        <Switch>
+      <Container fixed>
+        <Switch fixed>
           {/*signup*/}
           <Route path="/forecasts/" >
             <TierDashboard></TierDashboard>
           </Route>
-          <Route path="/" >
+          <Route path="/policy" >
             <PolicyDashboard />
           </Route>
 
-        </Switch>
+          <Route path="/" >
+            <HomeDashBoard />
+          </Route>
 
-      </div>
+        </Switch>
+      </Container>
     </div>)
 }
 
