@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-    textAlign:"right"
+    textAlign: "right"
   },
 }));
 
@@ -49,22 +49,13 @@ let App = () => {
   let [showTierPrediction, setShowTierPrediction] = React.useState(false);
   let [showPolicyPrediction, setShowPolicyPrediction] = React.useState(false);
 
-  if (showPolicyPrediction) {
-    window.location.href = "/policy"
-  }
-  if (showTierPrediction) {
+
+  const handleForecastBtnEvent = (event) => {
     window.location.href = "/forecasts"
   }
 
-
-  const handleForecastBtnEvent = (event) => {
-    setShowPolicyPrediction(false)
-    setShowTierPrediction(true)
-  }
-
   const handlePolicyPredctionsBtnEvent = (event) => {
-    setShowTierPrediction(false)
-    setShowPolicyPrediction(true)
+    window.location.href = "/policy"
   }
   return (
     <div >
@@ -76,7 +67,6 @@ let App = () => {
           <Typography className={classes.title}>
             COVID 19 Forecast and Tier Assignment
                     </Typography>
-
         </Toolbar>
       </AppBar>
       <div className={classes.paper}>

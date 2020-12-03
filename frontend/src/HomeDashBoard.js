@@ -163,8 +163,18 @@ const HomeDashBoard = ({ stateName, county, fips, tier, dispatch }) => {
                                                     </Grid>
                                                     {s.hasOwnProperty('sba_links') && s.sba_links.map((sba) => {
                                                         return (<Grid item spacing={2} >
-                                                            <IconButton edge="start" color="inherit" aria-label="sponsor_link">
-                                                                <Avatar alt={sba.name} src={sba.icon} />
+                                                            <IconButton edge="start" color="inherit" aria-label="sponsor_link" onClick={(event) => {
+                                                                event.preventDefault()
+
+                                                                try {
+                                                                    console.log(JSON.stringify(sba.link))
+                                                                    new URL(JSON.stringify(sba.link));
+                                                                    window.open(JSON.stringify(sba.link), "_blank")
+                                                                } catch (e) {
+                                                                    console.log(e)
+                                                                }
+                                                            }}>
+                                                                {sba.name}    <Avatar alt={sba.name} src={sba.icon} />
                                                             </IconButton>
                                                         </Grid>)
                                                     })}
