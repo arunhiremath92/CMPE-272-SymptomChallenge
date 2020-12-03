@@ -63,14 +63,14 @@ let App = () => {
     setShowPolicyPrediction(true)
   }
   return (
-    <div >
+    <div className={classes.paper}>
       <AppBar position="static">
         <Toolbar>
           <Button color="inherit" onClick={handleForecastBtnEvent}> Tier Predictions</Button>
           <Button color="inherit" onClick={handlePolicyPredctionsBtnEvent}> Policy Predictions</Button>
         </Toolbar>
       </AppBar>
-      <Container fixed>
+      <Container>
         <Switch fixed>
           {/*signup*/}
           <Route path="/forecasts/" >

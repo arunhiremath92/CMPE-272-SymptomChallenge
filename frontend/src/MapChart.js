@@ -3,53 +3,55 @@ import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simp
 import { scaleQuantile } from "d3-scale";
 import { csv } from "d3-fetch";
 import { Container } from "@material-ui/core";
+import { connect } from "react-redux";
+import { setCountyName, setFips, setStateName, setTier } from "./store/mapsDataActions";
+
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json";
 
-const MapChart = ({ setTooltipContent }) => {
+
+
+
+const MapChart = ({ dispatch }) => {
     const [data, setData] = useState([]);
 
+
     useEffect(() => {
-        // https://www.bls.gov/lau/
-        csv("/unemployment_by_county.csv").then(counties => {
+        csv("/county_tiers/us_county_tiers.csv").then(counties => {
+            console.log("Setting Data");
             setData(counties);
         });
     }, []);
 
-    const colorScale = scaleQuantile()
-        .domain(data.map(d => d.unemployment_rate))
-        .range([
-            "#9400D3",
-            "#FF0000",
-            "#ffad9f",
-            "#FFA500",
-            "#FFFF00",
-            "#e2492d",
-            "#be3d26",
-            "#9a311f",
-            "#782618"
-        ]);
+    let colorCoding = [
+        "#9420D3",
+        "#FF0000",
+        "#ffad9f",
+        "#FFA500",
+    ]
 
-
+    const colorScale = ["#e0dad7", "#21156e", '#eb0c0c', "#ed4a0e", "#ebd80c"]
     let [region, setRegion] = React.useState("");
     return (
-        <Container maxWidth="lg">
-            <ComposableMap projection="geoAlbersUsa" data-tip="" projectionConfig={{ scale: 640 }}>
+        <Container maxWidth="md">
+            <ComposableMap projection="geoAlbersUsa" data-tip="" projectionConfig={{ scale: 800 }}>
                 <Geographies geography={geoUrl}>
                     {({ geographies }) =>
                         geographies.map(geo => {
-                            const cur = data.find(s => s.id === geo.id);
+                            let curr = data.find((element) => {
+                                return element.fips === geo.id;
+                            })
                             return (
                                 <Geography
                                     key={geo.rsmKey}
+                                    onClick={(event) => {
+                                        dispatch(setTier(curr ? curr.tier : 0));
+                                        dispatch(setCountyName(geo.properties.name));
+                                        dispatch(setStateName(curr ? curr.state :""))
+                                        dispatch(setFips(geo.id));
+                                    }}
                                     geography={geo}
-                                    onMouseEnter={() => {
-                                        setRegion(geo.properties.name);
-                                    }}
-                                    onMouseLeave={() => {
-                                        setRegion("");
-                                    }}
-                                    fill={cur ? colorScale(cur.unemployment_rate) : "#EEE"}
+                                    fill={curr ? colorScale[parseInt(curr.tier)] : '#e0dad7'}
                                 />
                             );
                         })
@@ -57,8 +59,19 @@ const MapChart = ({ setTooltipContent }) => {
                 </Geographies>
             </ComposableMap>
             <h3> {region} </h3>
-       </Container>
+        </Container>
     );
 };
 
-export default MapChart;
+
+
+const mapStateToProps = (state) => {
+    return {
+        stateName: state.mapsDataReducer.stateName,
+        county: state.mapsDataReducer.county,
+        fips: state.mapsDataReducer.fips,
+        tier: state.mapsDataReducer.tier,
+    };
+};
+
+export default connect(mapStateToProps)(MapChart);

@@ -1,147 +1,206 @@
 import React, { Component } from 'react';
 import './App.css'; /* optional for styling like the :hover pseudo-class */
 import USAMap from "react-usa-map";
-import { Avatar, Card, CardContent, CardHeader, FormControl, Grid, InputLabel, makeStyles, MenuItem, NativeSelect, Select, Tooltip } from '@material-ui/core';
-import { deepOrange, deepPurple } from '@material-ui/core/colors';
+import { Card, CardContent, CardHeader, FormControl, Grid, InputLabel, makeStyles, withStyles, MenuItem, NativeSelect, Select, Tooltip, Accordion, AccordionSummary, AccordionDetails, Icon, Divider, Avatar, IconButton } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
+import MapChart from './MapChart'
+import { getUSStates, getCounties } from './USStates';
+import purple_tire_data from "./data/purple_tier_data";
+import orange_tier_data from "./data/orange_tier_data";
+import red_tier_data from "./data/red_tier_data";
+import { setCountyName, setStateName } from './store/mapsDataActions';
+import { connect } from 'react-redux';
+import yellow_tier_data from './data/yellow_tier_data';
+import { green } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
-        padding: theme.spacing(2),
+        padding: theme.spacing(),
         textAlign: 'center',
         color: theme.palette.text.secondary,
         margin: theme.spacing(1),
     },
-    root: {
-        flexGrow: 1,
-    },
-    formControl: {
+    accord_display: {
+        padding: theme.spacing(),
+        textAlign: 'left',
+        color: theme.palette.text.secondary,
         margin: theme.spacing(1),
-        minWidth: 120,
     },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
+    text: {
+        ...theme.typography.button,
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(1),
+    },
+    heading: {
+        fontSize: theme.typography.pxToRem(15),
+        fontWeight: theme.typography.fontWeightRegular,
+    },
+    policy: {
+        '& > span': {
+            margin: theme.spacing(1),
+        },
     },
     card: {
-        minWidth: 275,
+        width: 200,
+        height: 150,
+        margin: theme.spacing(2),
     },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-    },
-    title: {
-        fontSize: 14,
-    },
-    pos: {
-        marginBottom: 12,
-    },
-    orange: {
-        color: theme.palette.getContrastText(deepOrange[500]),
-        backgroundColor: deepOrange[500],
-    },
-    purple: {
-        color: theme.palette.getContrastText(deepPurple[500]),
-        backgroundColor: deepPurple[500],
+    media: {
+        height: 140,
     },
 }));
-const statesCustomConfig = () => {
-    return {
-        "NJ": {
-            fill: "navy",
-            clickHandler: (event) => console.log('Custom handler for NJ', event.target.dataset)
-        },
-        "NY": {
-            fill: "#CC0000"
-        },
-        "CA": {
-            fill: '#9400D3',
-            clickHandler: (event) => console.log('Custom handler for NJ', event.target.dataset)
-        },
-    };
-};
-let HomeDashBoard = () => {
 
 
-    const mapHandler = (event) => {
-        setStateName(20);
-        setCardVisibility(false);
-    };
 
-    const handleStateSelection = (event) => {
-        setStateName(event.target.value);
-        setCardVisibility(false)
-    };
+const HomeDashBoard = ({ stateName, county, fips, tier, dispatch }) => {
 
-    const handleCountyNameSelection = (event) => {
-        setCounty(event.target.value);
-        setCardVisibility(true)
-    };
+
+    let purple = JSON.parse(JSON.stringify(purple_tire_data));
+    let yellow = JSON.parse(JSON.stringify(yellow_tier_data));
+    let red = JSON.parse(JSON.stringify(red_tier_data));
+    let orange = JSON.parse(JSON.stringify(orange_tier_data));
+    let tier_policy = [{ sectors: [] }, purple, red, orange, yellow]
+    let [policyData, setPolicyData] = React.useState([])
+    let [showPolicyData, setShowPolicyData] = React.useState(false);
+    let [tier_color, setTierColor] = React.useState("#FF0000")
+    let color_schemes = ["#9420D3", "#9420D3",
+        "#FF0000",
+        "#ffad9f",
+        "#FFA500",]
+
     const classes = useStyles();
 
-    let [stateName, setStateName] = React.useState(0)
-    let [county, setCounty] = React.useState(0)
-    let [tier, setTier] = React.useState(classes.orange);
-    let [cardVisibility, setCardVisibility] = React.useState(false);
+    React.useEffect(() => {
+        setPolicyData([])
+        let body = {
+            "state": stateName
+        }
+        console.log(JSON.stringify(body));
+        axios.post("https://covid-19-tier-backend.herokuapp.com/api/policy-info/", body)
+            .then((res) => {
+                // let response = JSON.parse(res.data);//JSON.parse(res.data)
+                console.log(res.data)
+                setPolicyData(res.data)
+                setShowPolicyData(true);
+
+            })
+            .catch((error) => {
+                console.log(error)
+                setPolicyData([])
+                // setShowPolicyData(false);
+            })
+
+    }, [stateName])
+
     return (
-        <div className={classes.paper}>
-            <Grid container spacing={3}>
-                <Grid item xs={9} >
-                    <USAMap customize={statesCustomConfig()} onClick={mapHandler} />
+        <div>
+            <Grid container spacing={1}>
+                <Grid item xs={12}>
+                    <Typography variant="h4" component="h2">
+                        COVID 19 Forecast and Tier Assignment
+                    </Typography>
                 </Grid>
-                <Grid item xs={3} >
-                    <Grid item className={classes.formControl}>
-                        <FormControl className={classes.formControl}>
-                            <InputLabel id="demo-customized-select-label">State</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-outlined-label"
-                                id="demo-simple-select-outlined"
-                                value={stateName}
-                                onChange={handleStateSelection}
-                                label="Age"
-                            >
-                                <MenuItem value={0}>
-                                    <em>Select</em>
-                                </MenuItem>
-                                <MenuItem value={10}>California</MenuItem>
-                                <MenuItem value={20}>Washington</MenuItem>
-                                <MenuItem value={30}>Nevada</MenuItem>
-                            </Select>
-                        </FormControl>
+
+                <Grid item xs={12} >
+                    <MapChart ></MapChart>
+                </Grid>
+                <Grid item xs={12}>
+                    {showPolicyData && <h1>Active Policies for {stateName}</h1>}
+                </Grid>
+                <Grid item xs={12}>
+                    <Grid container>
+
+                        {policyData.map((k) => {
+                            return (
+                                <Grid item spacing={1} >
+                                    <Card className={classes.card}>
+                                        <CardContent>
+                                            <Typography gutterBottom variant="overline" display="block" gutterBottom>
+                                                {k.name}
+                                            </Typography>
+                                            <Typography variant="body2" color="textSecondary" component="p">
+                                                {k.value}
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>)
+                        })}
                     </Grid>
-                    <Grid item className={classes.formControl}>
-                        <FormControl className={classes.formControl}>
-                            <InputLabel htmlFor="demo-customized-select-native">County Name</InputLabel>
-                            <Select
-                                labelId="demo-customized-select-label"
-                                id="demo-customized-select"
-                                value={county}
-                                onChange={handleCountyNameSelection}
-                            >
-                                <MenuItem value={0}>
-                                    <em>Select</em>
-                                </MenuItem>
-                                <MenuItem value={10}>San Francisco</MenuItem>
-                                <MenuItem value={20}>Alameda</MenuItem>
-                                <MenuItem value={30}>Santa Cruz</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <Grid item>
-                            {cardVisibility &&
-                                <Card className={classes.root} variant="outlined">
-                                    <CardHeader
-                                        title="Your County Status"
-                                        subheader="November 29 2020"
-                                    ></CardHeader>
-                                    <CardContent>
-                                        <Avatar className={tier} >o</Avatar>
-                                    </CardContent>
-                                </Card>}
-                        </Grid>
-                    </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                    {showPolicyData &&
+                        <h1>Forecasted Changes in  Policies for {county}</h1>}
+                    {tier_policy[tier].sectors.map((s) => {
+                        return (
+                            <Accordion>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1a-content"
+                                    id="panel1a-header"
+                                >
+                                    <Typography className={classes.heading}>{s.name}</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+
+                                    <Grid container>
+
+                                        <Typography>
+                                            {s.tiers[0].description}
+                                        </Typography>
+                                        <Grid item xs={12} className={classes.accord_display}>
+                                            <Typography>
+                                                {s.tiers[0].hasOwnProperty('metaData') && s.tiers[0].metaData.map((meta) => {
+                                                    return meta
+                                                })}
+                                            </Typography>
+                                        </Grid>
+
+                                        {s.hasOwnProperty('sponsorship_message') &&
+
+                                            <Grid item xs={12}>
+                                                <Grid item xs={12}>
+                                                    <Divider variant="middle" />
+                                                </Grid>
+                                                <Grid container>
+                                                    <Grid item spacing={1} >
+                                                        {<div className={classes.root}>{s.sponsorship_message}</div>}
+                                                    </Grid>
+                                                    {s.hasOwnProperty('sba_links') && s.sba_links.map((sba) => {
+                                                        return (<Grid item spacing={2} >
+                                                            <IconButton edge="start" color="inherit" aria-label="sponsor_link">
+                                                                <Avatar alt={sba.name} src={sba.icon} />
+                                                            </IconButton>
+                                                        </Grid>)
+                                                    })}
+                                                </Grid>
+                                            </Grid>
+                                        }
+                                    </Grid>
+
+                                </AccordionDetails>
+                            </Accordion>
+                        )
+                    })}
+
+                </Grid>
+                <Grid item xs={12}>
                 </Grid>
             </Grid>
-        </div>)
+        </div >)
 
 }
 
-export default HomeDashBoard;
+
+
+
+const mapStateToProps = (state) => {
+    return {
+        stateName: state.mapsDataReducer.stateName,
+        county: state.mapsDataReducer.county,
+        fips: state.mapsDataReducer.fips,
+        tier: state.mapsDataReducer.tier,
+    };
+};
+export default connect(mapStateToProps)(HomeDashBoard);
