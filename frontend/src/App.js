@@ -3,7 +3,7 @@ import './App.css'; /* optional for styling like the :hover pseudo-class */
 import USAMap from "react-usa-map";
 import PolicyDashboard from './PolicyDashboard';
 import TierDashboard from './TierDashboard';
-import { AppBar, Button, Container, makeStyles, Toolbar } from '@material-ui/core';
+import { AppBar, Button, Container, makeStyles, Toolbar, Typography } from '@material-ui/core';
 import { Switch, Route, Redirect } from "react-router-dom";
 import HomeDashBoard from './HomeDashBoard';
 
@@ -13,6 +13,10 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     margin: theme.spacing(1),
+  },
+  title: {
+    flexGrow: 1,
+    textAlign:"right"
   },
 }));
 
@@ -44,7 +48,7 @@ let App = () => {
   const classes = useStyles();
   let [showTierPrediction, setShowTierPrediction] = React.useState(false);
   let [showPolicyPrediction, setShowPolicyPrediction] = React.useState(false);
-  
+
   if (showPolicyPrediction) {
     window.location.href = "/policy"
   }
@@ -63,29 +67,36 @@ let App = () => {
     setShowPolicyPrediction(true)
   }
   return (
-    <div className={classes.paper}>
+    <div >
       <AppBar position="static">
         <Toolbar>
+          <Button color="inherit" onClick={(event) => { window.location.href = "/"; }}> Home</Button>
           <Button color="inherit" onClick={handleForecastBtnEvent}> Tier Predictions</Button>
           <Button color="inherit" onClick={handlePolicyPredctionsBtnEvent}> Policy Predictions</Button>
+          <Typography className={classes.title}>
+            COVID 19 Forecast and Tier Assignment
+                    </Typography>
+
         </Toolbar>
       </AppBar>
-      <Container>
-        <Switch fixed>
-          {/*signup*/}
-          <Route path="/forecasts/" >
-            <TierDashboard></TierDashboard>
-          </Route>
-          <Route path="/policy" >
-            <PolicyDashboard />
-          </Route>
+      <div className={classes.paper}>
+        <Container>
+          <Switch fixed>
+            {/*signup*/}
+            <Route path="/forecasts/" >
+              <TierDashboard></TierDashboard>
+            </Route>
+            <Route path="/policy" >
+              <PolicyDashboard />
+            </Route>
 
-          <Route path="/" >
-            <HomeDashBoard />
-          </Route>
+            <Route path="/" >
+              <HomeDashBoard />
+            </Route>
 
-        </Switch>
-      </Container>
+          </Switch>
+        </Container>
+      </div>
     </div>)
 }
 

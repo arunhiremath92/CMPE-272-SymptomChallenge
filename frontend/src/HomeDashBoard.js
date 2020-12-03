@@ -97,12 +97,6 @@ const HomeDashBoard = ({ stateName, county, fips, tier, dispatch }) => {
     return (
         <div>
             <Grid container spacing={1}>
-                <Grid item xs={12}>
-                    <Typography variant="h4" component="h2">
-                        COVID 19 Forecast and Tier Assignment
-                    </Typography>
-                </Grid>
-
                 <Grid item xs={12} >
                     <MapChart ></MapChart>
                 </Grid>
