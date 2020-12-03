@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import './App.css'; /* optional for styling like the :hover pseudo-class */
-import USAMap from "react-usa-map";
+
 import { Card, CardContent, CardHeader, FormControl, Grid, InputLabel, makeStyles, withStyles, MenuItem, NativeSelect, Select, Tooltip, Accordion, AccordionSummary, AccordionDetails, Icon, Divider, Avatar, IconButton } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 import MapChart from './MapChart'
-import { getUSStates, getCounties } from './USStates';
+
 import purple_tire_data from "./data/purple_tier_data";
 import orange_tier_data from "./data/orange_tier_data";
 import red_tier_data from "./data/red_tier_data";
