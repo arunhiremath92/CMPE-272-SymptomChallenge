@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './App.css'; /* optional for styling like the :hover pseudo-class */
 
-import { Card, CardContent, CardHeader, FormControl, Grid, InputLabel, makeStyles, withStyles, MenuItem, NativeSelect, Select, Tooltip, Accordion, AccordionSummary, AccordionDetails, Icon, Divider, Avatar, IconButton } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import { Card, CardContent, CardHeader, FormControl, Grid, InputLabel, makeStyles, withStyles, MenuItem, NativeSelect, Select, Tooltip, Accordion, AccordionSummary, AccordionDetails, Icon, Divider, Avatar, IconButton, Snackbar, ButtonGroup, Button } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
@@ -71,7 +72,16 @@ const HomeDashBoard = ({ stateName, county, fips, tier, dispatch }) => {
         "#FFA500",]
 
     const classes = useStyles();
+    const [snackBarOpen, setSnackBar] = React.useState(true);
 
+
+    const handleSnackBarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSnackBar(false);
+    };
     React.useEffect(() => {
         setPolicyData([])
         let body = {
@@ -97,8 +107,41 @@ const HomeDashBoard = ({ stateName, county, fips, tier, dispatch }) => {
     return (
         <div>
             <Grid container spacing={1}>
-                <Grid item xs={12} >
+                <Grid item xs={10} >
                     <MapChart ></MapChart>
+                </Grid>
+                <Grid item xs={2} >
+                <Typography> Tier Assignment based on Severity </Typography>
+                    <ButtonGroup
+                        orientation="vertical"
+                        color="primary"
+                        aria-label="vertical contained primary button group"
+                        variant="contained"
+                    >
+                        <Tooltip title="Widespread">
+                            <Button style={{
+                                backgroundColor: "#9420D3",
+                            }} onClick={() => setSnackBar(true)}></Button>
+                        </Tooltip>
+                        <Tooltip title="Substantial">
+
+                            <Button style={{
+                                backgroundColor: "#FF0000",
+                            }} onClick={() => setSnackBar(true)}></Button>
+                        </Tooltip>
+                        <Tooltip title="Moderate">
+
+                            <Button style={{
+                                backgroundColor: "#ffad9f",
+                            }} onClick={() => setSnackBar(true)}></Button>
+                        </Tooltip>
+                        <Tooltip title="Minimal">
+                            
+                        <Button style={{
+                                backgroundColor: "#FFA500",
+                            }} onClick={() => setSnackBar(true)}></Button>
+                        </Tooltip>
+                    </ButtonGroup>
                 </Grid>
                 <Grid item xs={12}>
                     {showPolicyData && <h1>Active Policies for {stateName}</h1>}
@@ -192,6 +235,24 @@ const HomeDashBoard = ({ stateName, county, fips, tier, dispatch }) => {
                 <Grid item xs={12}>
                 </Grid>
             </Grid>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                open={snackBarOpen}
+                autoHideDuration={6000}
+                onClose={handleSnackBarClose}
+                message="Click on your County to Understand the current and Future Policy Changes"
+                action={
+                    <React.Fragment>
+
+                        <IconButton size="small" aria-label="close" color="inherit" onClick={handleSnackBarClose}>
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                    </React.Fragment>
+                }
+            />
         </div >)
 
 }
