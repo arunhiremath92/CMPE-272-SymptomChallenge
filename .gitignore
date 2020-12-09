@@ -128,3 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 node_modules
+
+# DS Store
+workbook/.DS_Store
+.DS_Store
