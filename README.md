@@ -1,11 +1,5 @@
 # CMPE-272-SymptomChallenge
 
-
-Report and Documentation Link https://docs.google.com/document/d/1c0eiiHTj3Xl_4s5MdkdWjyOhvhZwoSXVAaVREp7bJoo/edit#heading=h.cndzvrbyd72k
-
-WorkBook and Task Distribution : https://docs.google.com/document/d/1vAElVfuyLdSFG9s_3R-4zG75Y-pCfu9kMvpRj_zhY0w/edit?ts=5f56ea12#heading=h.u4mtcl5cu2g8
-
-
 How to get started with this project:
 
 Install tools:
