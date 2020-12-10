@@ -61,8 +61,6 @@ regressor.fit(X_train, y_train, epochs=50, batch_size=20, verbose=2, shuffle=Fal
 predictions = regressor.predict(X_test)
 predictions = scaler1.inverse_transform(predictions)
 prediction_output = pd.DataFrame(predictions).to_csv('/data/PycharmProjects/sccases.csv')
-# # # scores = regressor.evaluate(X_test, y_test,verbose=0, return_dict=True)
-# # # print(scores)plt.plot(y_test, color = 'black', label = 'Actual R0')
 plt.plot(predictions, color='green', label='Predicted Cases')
 plt.title('Prediction')
 plt.xlabel('Time')
